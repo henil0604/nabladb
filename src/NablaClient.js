@@ -19,7 +19,11 @@ class NablaClient {
 
     static get log() {
 
-        const log = (verboseLevel = verbose, ...args) => {
+        const log = (verboseLevel = NablaClient.VERBOSE, ...args) => {
+
+            if (typeof verboseLevel === 'string') {
+                return helperModulesLog(verboseLevel, ...args);
+            }
 
             if (NablaClient.VERBOSE === 0) {
                 return null;
