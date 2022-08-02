@@ -20,5 +20,9 @@
   "bugs": {
     "url": "https://github.com/henil0604/nabladb/issues"
   },
-  "homepage": "https://github.com/henil0604/nabladb#readme"
+  "homepage": "https://github.com/henil0604/nabladb#readme",
+  "dependencies": {
+    "@helper-modules/log": "^1.0.0",
+    "zod": "^3.17.10"
+  }
 }
