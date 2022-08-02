@@ -3,13 +3,12 @@ const { NablaClientOptions } = require("./Types");
 
 const helperModulesLog = require("@helper-modules/log")
 helperModulesLog.setDefaultPrefix("[NablaDb]");
-let verbose = 0;
 
 class NablaClient {
 
     constructor (options) {
         this.options = NablaClientOptions.parse(options);
-        NablaClient.log.setVerbose(this.options.verbose)
+        NablaClient.VERBOSE = this.options.verbose
 
         NablaClient.log(1, "Initializing...")
     }
@@ -22,23 +21,21 @@ class NablaClient {
 
         const log = (verboseLevel = verbose, ...args) => {
 
-            if (verbose === 0) {
+            if (NablaClient.VERBOSE === 0) {
                 return null;
             }
 
-            if (verboseLevel <= verbose) {
+            if (verboseLevel <= NablaClient.VERBOSE) {
                 return helperModulesLog(...args)
             }
             return null;
         }
 
-        log.setVerbose = (newVerbose) => {
-            verbose = newVerbose;
-            return verbose;
-        }
 
         return log;
     }
+
+    static VERBOSE = 0;
 
 }
 
