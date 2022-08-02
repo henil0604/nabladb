@@ -1,0 +1,24 @@
+{
+  "name": "nabladb",
+  "version": "1.0.0",
+  "description": "File Based Database System",
+  "main": "index.js",
+  "scripts": {
+    "test": "nodemon --ignore * ./test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/henil0604/nabladb.git"
+  },
+  "keywords": [
+    "nabladb",
+    "db",
+    "database"
+  ],
+  "author": "Henil Malaviya <henilmalaviya06@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/henil0604/nabladb/issues"
+  },
+  "homepage": "https://github.com/henil0604/nabladb#readme"
+}
