@@ -23,6 +23,8 @@
   "homepage": "https://github.com/henil0604/nabladb#readme",
   "dependencies": {
     "@helper-modules/log": "^1.0.0",
+    "@helper-modules/random": "^1.0.0",
+    "filic": "^1.7.0",
     "zod": "^3.17.10"
   }
 }
