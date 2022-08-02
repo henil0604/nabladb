@@ -1,3 +1,3 @@
-const Nabla = require("./src/Nabla");
+const NablaClient = require("./src/NablaClient");
 
-module.exports = Nabla;
+module.exports = NablaClient;
