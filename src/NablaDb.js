@@ -103,7 +103,7 @@ class NablaDb {
         NablaClient.log(3, `Resetting id to null`);
         this.id = null;
 
-        NablaClient.log(2, `Database Deleted: ${this.dbName}`, 'success')
+        NablaClient.log(2, `Database Deleted: {${this.dbName}}`, 'success')
 
         return this;
     }
