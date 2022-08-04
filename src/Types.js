@@ -27,5 +27,7 @@ Types.NablaCollectionOptions = z.object({
     autoCreate: z.boolean().optional().default(true),
 }).optional().default({});
 
+Types.NablaDocument = z.object({}).passthrough();
+
 
 module.exports = Types;
