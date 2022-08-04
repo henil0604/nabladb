@@ -71,6 +71,7 @@ class NablaCollection {
         NablaClient.log(2, `Collection Created: {${this.collectionName}}`, 'success');
         return this;
     }
+
     delete() {
         NablaClient.log(1, `Deleting Collection: {${this.collectionName}}`, 'warn');
 
@@ -92,6 +93,31 @@ class NablaCollection {
 
         NablaClient.log(2, `Collection Deleted: {${this.collectionName}}`, 'success');
         return this;
+    }
+
+    // Document Methods
+    insert(data) {
+        data = NablaClient.Types.NablaDocument.parse(data);
+
+        data._documentId = random.uuid();
+
+        this.Db.$DbJson.update((content) => {
+            let json = content.json();
+
+            let collection = json.collections[this.collectionName]
+
+            let documents = collection.documents
+
+            documents[data._documentId] = {
+                ...data,
+                _createdAt: Date.now(),
+                _modifiedAt: Date.now(),
+            }
+
+            return json;
+        })
+
+        return data;
     }
 
     get exists() {
