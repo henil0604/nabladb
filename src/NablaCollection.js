@@ -120,6 +120,77 @@ class NablaCollection {
         return data;
     }
 
+    getAll() {
+        let documents = this.Db.$DbJson.content.json().collections[this.collectionName].documents;
+
+        let arrayDocuments = [];
+
+        for (const documentId in documents) {
+            const document = documents[documentId];
+            arrayDocuments.push(document);
+        }
+
+        return arrayDocuments;
+    }
+
+    getOne(findData) {
+        let found = null;
+
+        let documents = this.getAll();
+
+        for (let i = 0; i < documents.length; i++) {
+            const document = documents[i];
+
+            for (const findKey in findData) {
+                if (Object.hasOwnProperty.call(findData, findKey)) {
+                    const value = findData[findKey];
+
+                    if (value === document[findKey]) {
+                        found = document;
+                        continue;
+                    }
+                    found = null;
+                }
+
+            }
+
+            if (found !== null) {
+                break;
+            }
+        }
+
+        return found;
+    }
+
+    getMany(findData) {
+        let found = [];
+
+        let documents = this.getAll();
+
+        for (let i = 0; i < documents.length; i++) {
+            const document = documents[i];
+            let valid = false;
+
+            for (const findKey in findData) {
+                if (Object.hasOwnProperty.call(findData, findKey)) {
+                    const value = findData[findKey];
+
+                    if (value === document[findKey]) {
+                        valid = true;
+                        continue;
+                    }
+                    valid = false;
+                }
+            }
+
+            if (valid) {
+                found.push(document);
+            }
+        }
+
+        return found;
+    }
+
     get exists() {
         let collection = this.Db.$DbJson.content.json().collections[this.collectionName];
         return collection === undefined ? false : true;
