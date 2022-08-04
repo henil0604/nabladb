@@ -96,7 +96,7 @@ class NablaCollection {
     }
 
     // Document Methods
-    insert(data) {
+    insertOne(data) {
         data = NablaClient.Types.NablaDocument.parse(data);
 
         data._documentId = random.uuid();
@@ -120,6 +120,23 @@ class NablaCollection {
         return data;
     }
 
+    insertMany(data) {
+        if (Array.isArray(data) === false) {
+            throw new Error("NablaCollection.insertMany expects the first argument to be an array");
+        }
+        let inserted = [];
+
+        for (let i = 0; i < data.length; i++) {
+            let d = data[i];
+            d = NablaClient.Types.NablaDocument.parse(d);
+
+            inserted.push(this.insertOne(d));
+        }
+
+        return inserted;
+
+    }
+
     getAll() {
         let documents = this.Db.$DbJson.content.json().collections[this.collectionName].documents;
 
@@ -134,6 +151,8 @@ class NablaCollection {
     }
 
     getOne(findData) {
+        findData = NablaClient.Types.NablaDocument.parse(findData);
+
         let found = null;
 
         let documents = this.getAll();
@@ -163,6 +182,8 @@ class NablaCollection {
     }
 
     getMany(findData) {
+        findData = NablaClient.Types.NablaDocument.parse(findData);
+
         let found = [];
 
         let documents = this.getAll();
@@ -189,6 +210,105 @@ class NablaCollection {
         }
 
         return found;
+    }
+
+    updateOne(findData, updateData) {
+        findData = NablaClient.Types.NablaDocument.parse(findData);
+        updateData = NablaClient.Types.NablaDocument.parse(updateData);
+
+        let found = this.getOne(findData);
+
+        if (found === null) {
+            return null;
+        }
+
+        let id = found._documentId;
+
+        this.Db.$DbJson.update(content => {
+            let json = content.json();
+
+            let collection = json.collections[this.collectionName]
+            let documents = collection.documents;
+
+            documents[id] = {
+                ...documents[id],
+                ...updateData
+            }
+
+            return json;
+        })
+
+        return this.getOne({
+            _documentId: id
+        })
+    }
+
+    updateMany(findData, updateData) {
+        findData = NablaClient.Types.NablaDocument.parse(findData);
+        updateData = NablaClient.Types.NablaDocument.parse(updateData);
+
+        let updated = [];
+
+        let documents = this.getMany(findData);
+
+        for (let i = 0; i < documents.length; i++) {
+            const document = documents[i];
+
+            let update = this.updateOne({
+                _documentId: document._documentId
+            }, updateData)
+
+            updated.push(update);
+        }
+
+        return updated;
+    }
+
+    deleteOne(findData) {
+        findData = NablaClient.Types.NablaDocument.parse(findData);
+        let deleted = null;
+
+        let found = this.getOne(findData);
+
+        if (found === null) {
+            return deleted;
+        }
+
+        let id = found._documentId;
+
+        this.Db.$DbJson.update(content => {
+            let json = content.json();
+
+            let collection = json.collections[this.collectionName]
+            let documents = collection.documents;
+
+            deleted = documents[id];
+            delete documents[id];
+
+            return json;
+        })
+
+        return deleted;
+    }
+
+    deleteMany(findData) {
+        findData = NablaClient.Types.NablaDocument.parse(findData);
+
+        let deleted = [];
+
+        let documents = this.getMany(findData);
+
+        for (let i = 0; i < documents.length; i++) {
+            const document = documents[i];
+
+            let dl = this.deleteOne({
+                _documentId: document._documentId
+            })
+
+            deleted.push(dl);
+        }
+
+        return deleted;
     }
 
     get exists() {
