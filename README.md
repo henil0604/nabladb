@@ -1,1 +1,2 @@
-# NablaDb
+# NablaDb 2.0
+
