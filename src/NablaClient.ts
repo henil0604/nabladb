@@ -3,6 +3,8 @@ import * as Path from 'path';
 import { DEFAULT_NABLA_DB_ROOT_FOLDER_NAME, DEFAULT_NABLA_JSON_FILE_CONTENTS } from './const.js';
 import helperModulesLog from "@helper-modules/log";
 import Filic from 'filic';
+import NablaDb from './NablaDb.js';
+import { NablaDbOptions } from './types/NablaDb.js';
 
 helperModulesLog.setDefaultPrefix("[NablaDb]");
 
@@ -11,7 +13,7 @@ class NablaClient {
     public static VERBOSE = 0;
     public options: NablaClientOptions;
 
-    constructor(options: NablaClientOptions) {
+    constructor(options?: NablaClientOptions) {
         this.options = options;
 
         this._init();
@@ -62,8 +64,18 @@ class NablaClient {
 
 
         // creates db directory
-        this.$DbDir.exists || NablaClient.log(2, "Creating db Directory") || this.$DbDir.createSync();
+        !this.$DbsDir.exists ? NablaClient.log(2, "Creating db Directory") && this.$DbsDir.createSync() : 0;
 
+    }
+
+    public db(dbName: string, options?: NablaDbOptions) {
+        if (!options) {
+            options = {
+                client: this
+            };
+        }
+        options.client = this;
+        return new NablaDb(dbName, options)
     }
 
     get $Root() {
@@ -72,8 +84,8 @@ class NablaClient {
     get $NablaJson() {
         return this.$Root.openFile("nabla.json", { autoCreate: false });
     }
-    get $DbDir() {
-        return this.$Root.openDir("db", { autoCreate: false });
+    get $DbsDir() {
+        return this.$Root.openDir("dbs", { autoCreate: false });
     }
 
     public static log(verboseLevel = NablaClient.VERBOSE, ...args) {
