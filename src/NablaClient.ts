@@ -22,9 +22,18 @@ class NablaClient {
         // Option Default Filling
         this.options.root = this.options.root || Path.join(process.cwd(), DEFAULT_NABLA_DB_ROOT_FOLDER_NAME)
         this.options.verbose = this.options.verbose ?? 0;
+        this.options.autoInit = this.options.autoInit || true;
 
         // setting verbose level
         NablaClient.VERBOSE = this.options.verbose;
+
+        if (this.options.autoInit) {
+            this.init();
+        }
+
+    }
+
+    public init() {
 
         NablaClient.log(1, "Initializing")
 
