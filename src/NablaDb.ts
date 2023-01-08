@@ -71,7 +71,7 @@ class NablaDb {
 
     public delete() {
 
-        if (!this.exists) {
+        if (!this.$DbDir.exists) {
             NablaClient.log(1, `Database {${this.dbName}} Does not Exists`, 'warn');
             return this;
         }
@@ -113,11 +113,9 @@ class NablaDb {
     public get exists() {
         let condition1 = this.Client.$NablaJson.readSync().toJSON()?.dbs[this.dbName] === undefined ? false : true;
 
-        let condition2 = this.$DbDir.exists;
+        let condition2 = this.$DbJson.exists;
 
-        let condition3 = this.$DbJson.exists;
-
-        if ((condition3 === false || condition2 === false) && condition1 === true) {
+        if (condition1 === false && condition2 === true) {
             this.delete();
         }
 

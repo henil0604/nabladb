@@ -30,7 +30,6 @@
   "homepage": "https://github.com/henil0604/filic#readme",
   "author": "Henil Malaviya <henilmalaviya06@gmail.com>",
   "dependencies": {
-    "@helper-modules/log": "^1.0.0",
-    "@helper-modules/random": "^1.0.0"
+    "@helper-modules/log": "^1.0.0"
   }
 }

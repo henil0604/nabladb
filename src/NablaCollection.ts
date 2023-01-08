@@ -1,5 +1,7 @@
+import { randomUUID } from "crypto";
 import NablaClient from "./NablaClient.js";
 import { NablaCollectionOptions } from "./types/NablaCollection.js";
+import Utils from "./Utils.js";
 
 
 class NablaCollection {
@@ -68,7 +70,7 @@ class NablaCollection {
 
     public delete() {
 
-        if (!this.exists) {
+        if (!this.$CollectionJson.exists) {
             NablaClient.log(1, `Collection {${this.collectionName}} Does not Exists`, 'warn');
             return this;
         }
@@ -97,6 +99,50 @@ class NablaCollection {
         return this;
     }
 
+    public async insert(data: any) {
+        data._id = data._id || randomUUID();
+
+        await this.$CollectionJson.update((content) => {
+            const json = content.toJSON();
+            json.documents[data._id] = data;
+            return json;
+        })
+
+        return data;
+    }
+    public insertSync(data: any) {
+        data._id = data._id || randomUUID();
+
+        this.$CollectionJson.updateSync((content) => {
+            const json = content.toJSON();
+            json.documents[data._id] = data;
+            return json
+        })
+
+        return data;
+    }
+
+    public async insertMany(dataGroup: any[]) {
+        for await (const data of dataGroup) {
+            await this.insert(data);
+        }
+    }
+    public insertManySync(dataGroup: any[]) {
+        for (const data of dataGroup) {
+            this.insertSync(data);
+        }
+    }
+
+    public async getAll() {
+        const documents = (await this.$CollectionJson.read()).toJSON().documents
+        return Utils.objectToArray(documents);
+    }
+
+    public getAllSync() {
+        const documents = (this.$CollectionJson.readSync()).toJSON().documents
+        return Utils.objectToArray(documents);
+    }
+
     public get exists() {
 
         if (!this.Db.exists) {
@@ -112,7 +158,6 @@ class NablaCollection {
         }
 
         return condition1 && condition2;
-        return false;
     }
 
     public get $CollectionJson() {
@@ -122,6 +167,7 @@ class NablaCollection {
     public get Db() {
         return this.options.db;
     }
+
 }
 
 export default NablaCollection;
