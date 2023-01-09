@@ -143,7 +143,7 @@ class NablaCollection {
         return Utils.objectToArray(documents);
     }
 
-    public async getMany(where?: any) {
+    public async getMany(where: any) {
         const docs = [];
 
         const allDocs = await this.getAll();
@@ -167,7 +167,7 @@ class NablaCollection {
         }
         return docs;
     }
-    public getManySync(where?: any) {
+    public getManySync(where: any) {
         const docs = [];
 
         const allDocs = this.getAllSync();
@@ -192,16 +192,16 @@ class NablaCollection {
         return docs;
     }
 
-    public async getFirst(where?: any) {
+    public async getFirst(where: any) {
         const docs = await this.getMany(where);
         return (docs.length === 0) ? null : docs[0];
     }
-    public getFirstSync(where?: any) {
+    public getFirstSync(where: any) {
         const docs = this.getManySync(where);
         return (docs.length === 0) ? null : docs[0];
     }
 
-    public async deleteFirst(where?: any) {
+    public async deleteFirst(where: any) {
         const doc = await this.getFirst(where);
 
         if (!doc) return null;
@@ -214,9 +214,9 @@ class NablaCollection {
 
         return doc;
     }
-    public deleteFirstSync(where?: any) {
+    public deleteFirstSync(where: any) {
         const doc = this.getFirstSync(where);
-        
+
         if (!doc) return null;
 
         this.$CollectionJson.updateSync((content) => {
@@ -226,6 +226,62 @@ class NablaCollection {
         })
 
         return doc;
+    }
+
+    public async deleteMany(where: any) {
+        const docs = await this.getMany(where);
+        for await (const doc of docs) {
+            await this.deleteFirst({
+                _id: doc._id
+            })
+        }
+        return docs;
+    }
+    public deleteManySync(where: any) {
+        const docs = this.getManySync(where);
+        for (const doc of docs) {
+            this.deleteFirstSync({
+                _id: doc._id
+            })
+        }
+        return docs;
+    }
+
+    public async updateFirst(where: any, data?: any) {
+        const doc = await this.getFirst(where);
+        let updatedDoc = doc;
+        await this.$CollectionJson.update(content => {
+            const json = content.toJSON()
+
+            json.documents[doc._id] = {
+                ...doc,
+                ...data,
+                _id: doc._id // prevents _id changes
+            }
+
+            updatedDoc = json.documents[doc._id]
+            return json;
+        })
+
+        return updatedDoc;
+    }
+    public updateFirstSync(where: any, data?: any) {
+        const doc = this.getFirstSync(where);
+        let updatedDoc = doc;
+        this.$CollectionJson.updateSync(content => {
+            const json = content.toJSON()
+
+            json.documents[doc._id] = {
+                ...doc,
+                ...data,
+                _id: doc._id // prevents _id changes
+            }
+
+            updatedDoc = json.documents[doc._id]
+            return json;
+        })
+
+        return updatedDoc;
     }
 
     public get exists() {
