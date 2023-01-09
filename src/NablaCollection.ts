@@ -102,53 +102,74 @@ class NablaCollection {
     public async insert(data: any) {
         data._id = data._id || randomUUID();
 
+        NablaClient.log(3, `Updating {${this.$CollectionJson.filename}}`)
         await this.$CollectionJson.update((content) => {
             const json = content.toJSON();
+            NablaClient.log(4, `Inserting document`)
             json.documents[data._id] = data;
             return json;
         })
+
+        NablaClient.log(2, `Inserted {${data._id}} in {${this.path}}`, "success")
 
         return data;
     }
     public insertSync(data: any) {
         data._id = data._id || randomUUID();
 
+        NablaClient.log(3, `Updating {${this.$CollectionJson.filename}}`)
         this.$CollectionJson.updateSync((content) => {
             const json = content.toJSON();
+            NablaClient.log(4, `Inserting document`)
             json.documents[data._id] = data;
             return json
         })
+
+        NablaClient.log(2, `Inserted {${data._id}} in {${this.path}}`, "success")
 
         return data;
     }
 
     public async insertMany(dataGroup: any[]) {
+        NablaClient.log(3, `Inserting {${dataGroup.length}} Documents`);
+        const inserted = [];
         for await (const data of dataGroup) {
-            await this.insert(data);
+            const doc = await this.insert(data);
+            inserted.push(doc);
         }
+        NablaClient.log(2, `Inserted {${inserted.length}} Documents in {${this.path}}`, "success");
+        return inserted;
     }
+
     public insertManySync(dataGroup: any[]) {
+        NablaClient.log(3, `Inserting {${dataGroup.length}} Documents`);
+        const inserted = [];
         for (const data of dataGroup) {
-            this.insertSync(data);
+            const doc = this.insertSync(data);
+            inserted.push(doc);
         }
+        NablaClient.log(2, `Inserted {${inserted.length}} Documents in {${this.path}}`, "success");
+        return inserted;
     }
 
     public async getAll() {
+        NablaClient.log(2, "Fetching All Documents");
         const documents = (await this.$CollectionJson.read()).toJSON().documents
         return Utils.objectToArray(documents);
     }
-
     public getAllSync() {
+        NablaClient.log(2, "Fetching All Documents");
         const documents = (this.$CollectionJson.readSync()).toJSON().documents
         return Utils.objectToArray(documents);
     }
 
     public async getMany(where: any) {
+        NablaClient.log(3, `Fetching Documents with {${Object.keys(where).length}} checks`);
         const docs = [];
-
         const allDocs = await this.getAll();
 
         for await (const doc of allDocs) {
+
             let valid = false;
             for (const key in where) {
                 if (Object.prototype.hasOwnProperty.call(where, key)) {
@@ -162,12 +183,15 @@ class NablaCollection {
             }
 
             if (valid === true) {
+                NablaClient.log(4, `Matched: {${doc._id}}`);
                 docs.push(doc);
             }
         }
+        NablaClient.log(2, `Found {${docs.length}} out of {${allDocs.length}}`, "success");
         return docs;
     }
     public getManySync(where: any) {
+        NablaClient.log(3, `Fetching Documents with {${Object.keys(where).length}} checks`);
         const docs = [];
 
         const allDocs = this.getAllSync();
@@ -186,9 +210,11 @@ class NablaCollection {
             }
 
             if (valid === true) {
+                NablaClient.log(4, `Matched: ${doc._id}`);
                 docs.push(doc);
             }
         }
+        NablaClient.log(2, `Found {${docs.length}} out of {${allDocs.length}}`, "success");
         return docs;
     }
 
@@ -202,57 +228,73 @@ class NablaCollection {
     }
 
     public async deleteFirst(where: any) {
+        NablaClient.log(3, `Deleting First document matching {${Object.keys(where).length}} conditions`, "warn");
         const doc = await this.getFirst(where);
 
         if (!doc) return null;
 
+        NablaClient.log(3, `Updating {${this.$CollectionJson.filename}}`)
         await this.$CollectionJson.update((content) => {
             const json = content.toJSON();
+            NablaClient.log(3, `Deleting document`);
             delete json.documents[doc._id];
             return json;
         })
 
+        NablaClient.log(2, `Deleted {${doc._id}} from {${this.path}}`, "warn")
         return doc;
     }
     public deleteFirstSync(where: any) {
+        NablaClient.log(3, `Deleting First document matching {${Object.keys(where).length}} conditions`, "warn");
         const doc = this.getFirstSync(where);
 
         if (!doc) return null;
 
+        NablaClient.log(3, `Updating {${this.$CollectionJson.filename}}`)
         this.$CollectionJson.updateSync((content) => {
             const json = content.toJSON();
+            NablaClient.log(3, `Deleting document`);
             delete json.documents[doc._id];
             return json;
         })
 
+        NablaClient.log(2, `Deleted {${doc._id}} from {${this.path}}`, "warn")
         return doc;
     }
 
     public async deleteMany(where: any) {
         const docs = await this.getMany(where);
+        NablaClient.log(3, `Deleting {${docs.length}} documents from {${this.path}}`, "warn")
         for await (const doc of docs) {
             await this.deleteFirst({
                 _id: doc._id
             })
         }
+        NablaClient.log(2, `Deleted {${docs.length}} documents from {${this.path}}`, "warn")
         return docs;
     }
     public deleteManySync(where: any) {
         const docs = this.getManySync(where);
+        NablaClient.log(3, `Deleting {${docs.length}} documents from {${this.path}}`, "warn")
         for (const doc of docs) {
             this.deleteFirstSync({
                 _id: doc._id
             })
         }
+        NablaClient.log(2, `Deleted {${docs.length}} documents from {${this.path}}`, "warn")
         return docs;
     }
 
     public async updateFirst(where: any, data: any) {
+        NablaClient.log(3, `Updating First document's {${Object.keys(data).length}} properties, matching {${Object.keys(where).length}} conditions`);
+
         const doc = await this.getFirst(where);
         let updatedDoc = doc;
+        NablaClient.log(4, `Updating {${this.$CollectionJson.filename}}`);
         await this.$CollectionJson.update(content => {
             const json = content.toJSON()
 
+            NablaClient.log(4, `Rewriting {${doc._id}}`);
             json.documents[doc._id] = {
                 ...doc,
                 ...data,
@@ -263,14 +305,19 @@ class NablaCollection {
             return json;
         })
 
+        NablaClient.log(2, `Updated {${Object.keys(data).length}} properties of {${doc._id}} in {${this.path}}`);
         return updatedDoc;
     }
     public updateFirstSync(where: any, data: any) {
+        NablaClient.log(3, `Updating First document's {${Object.keys(data).length}} properties, matching {${Object.keys(where).length}} conditions`);
+
         const doc = this.getFirstSync(where);
         let updatedDoc = doc;
+        NablaClient.log(4, `Updating {${this.$CollectionJson.filename}}`);
         this.$CollectionJson.updateSync(content => {
             const json = content.toJSON()
 
+            NablaClient.log(4, `Rewriting {${doc._id}}`);
             json.documents[doc._id] = {
                 ...doc,
                 ...data,
@@ -281,11 +328,13 @@ class NablaCollection {
             return json;
         })
 
+        NablaClient.log(2, `Updated {${Object.keys(data).length}} properties of {${doc._id}} in {${this.path}}`);
         return updatedDoc;
     }
 
     public async updateMany(where: any, data: any) {
         const docs = await this.getMany(where);
+        NablaClient.log(3, `Updating {${docs.length}} documents`)
         const updatedDocs = [];
         for await (const doc of docs) {
             const updatedDoc = await this.updateFirst({
@@ -293,10 +342,12 @@ class NablaCollection {
             }, data);
             updatedDocs.push(updatedDoc);
         }
+        NablaClient.log(2, `Updated {${docs.length}} documents`, "success")
         return updatedDocs;
     }
     public updateManySync(where: any, data: any) {
         const docs = this.getManySync(where);
+        NablaClient.log(3, `Updating {${docs.length}} documents`)
         const updatedDocs = [];
         for (const doc of docs) {
             const updatedDoc = this.updateFirstSync({
@@ -304,6 +355,7 @@ class NablaCollection {
             }, data);
             updatedDocs.push(updatedDoc);
         }
+        NablaClient.log(2, `Updated {${docs.length}} documents`, "success")
         return updatedDocs;
     }
 
@@ -330,6 +382,10 @@ class NablaCollection {
 
     public get Db() {
         return this.options.db;
+    }
+
+    private get path() {
+        return `${this.Db.dbName}.${this.collectionName}`;
     }
 
 }
