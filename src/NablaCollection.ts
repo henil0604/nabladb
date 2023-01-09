@@ -284,6 +284,29 @@ class NablaCollection {
         return updatedDoc;
     }
 
+    public async updateMany(where: any, data: any) {
+        const docs = await this.getMany(where);
+        const updatedDocs = [];
+        for await (const doc of docs) {
+            const updatedDoc = await this.updateFirst({
+                _id: doc._id
+            }, data);
+            updatedDocs.push(updatedDoc);
+        }
+        return updatedDocs;
+    }
+    public updateManySync(where: any, data: any) {
+        const docs = this.getManySync(where);
+        const updatedDocs = [];
+        for (const doc of docs) {
+            const updatedDoc = this.updateFirstSync({
+                _id: doc._id
+            }, data);
+            updatedDocs.push(updatedDoc);
+        }
+        return updatedDocs;
+    }
+
     public get exists() {
 
         if (!this.Db.exists) {
