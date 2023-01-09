@@ -126,7 +126,7 @@ class NablaDb {
         return this.Client.$DbsDir.openDir(`${this.dbName}`, { autoCreate: false })
     }
 
-    public get $CollectionDir() {
+    public get $CollectionsDir() {
         return this.$DbDir.openDir(`collections`, { autoCreate: false })
     }
 

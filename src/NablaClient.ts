@@ -104,6 +104,9 @@ class NablaClient {
         return null;
     }
 
+    public static create(options?: NablaClientOptions) {
+        return new NablaClient(options);
+    }
 
 }
 

@@ -22,7 +22,7 @@ class NablaCollection {
         NablaClient.log(3, `Checking to autoCreate options`);
         // Creating database
         if (this.options.autoCreate && this.exists === false) {
-            !this.Db.$CollectionDir.exists ? NablaClient.log(2, "Creating collections Directory") && this.Db.$CollectionDir.createSync() : 0;
+            !this.Db.$CollectionsDir.exists ? NablaClient.log(2, "Creating collections Directory") && this.Db.$CollectionsDir.createSync() : 0;
 
             NablaClient.log(3, `Could not find database, creating it`);
             this.create();
@@ -377,7 +377,7 @@ class NablaCollection {
     }
 
     public get $CollectionJson() {
-        return this.Db.$CollectionDir.openFile(`${this.collectionName}.json`, { autoCreate: false });
+        return this.Db.$CollectionsDir.openFile(`${this.collectionName}.json`, { autoCreate: false });
     }
 
     public get Db() {
