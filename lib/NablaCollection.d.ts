@@ -1,0 +1,32 @@
+import { NablaCollectionOptions } from "./types/NablaCollection.js";
+declare class NablaCollection {
+    collectionName: string;
+    options: NablaCollectionOptions;
+    constructor(collectionName: string, options?: NablaCollectionOptions);
+    private _init;
+    create(): this;
+    delete(): this;
+    insert(data: any): Promise<any>;
+    insertSync(data: any): any;
+    insertMany(dataGroup: any[]): Promise<any[]>;
+    insertManySync(dataGroup: any[]): any[];
+    getAll(): Promise<any[]>;
+    getAllSync(): any[];
+    getMany(where: any): Promise<any[]>;
+    getManySync(where: any): any[];
+    getFirst(where: any): Promise<any>;
+    getFirstSync(where: any): any;
+    deleteFirst(where: any): Promise<any>;
+    deleteFirstSync(where: any): any;
+    deleteMany(where: any): Promise<any[]>;
+    deleteManySync(where: any): any[];
+    updateFirst(where: any, data: any): Promise<any>;
+    updateFirstSync(where: any, data: any): any;
+    updateMany(where: any, data: any): Promise<any[]>;
+    updateManySync(where: any, data: any): any[];
+    get exists(): boolean;
+    get $CollectionJson(): import("filic/lib/File.js").default;
+    get Db(): import("./NablaDb.js").default;
+    private get path();
+}
+export default NablaCollection;
