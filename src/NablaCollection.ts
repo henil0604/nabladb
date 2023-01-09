@@ -247,7 +247,7 @@ class NablaCollection {
         return docs;
     }
 
-    public async updateFirst(where: any, data?: any) {
+    public async updateFirst(where: any, data: any) {
         const doc = await this.getFirst(where);
         let updatedDoc = doc;
         await this.$CollectionJson.update(content => {
@@ -265,7 +265,7 @@ class NablaCollection {
 
         return updatedDoc;
     }
-    public updateFirstSync(where: any, data?: any) {
+    public updateFirstSync(where: any, data: any) {
         const doc = this.getFirstSync(where);
         let updatedDoc = doc;
         this.$CollectionJson.updateSync(content => {
