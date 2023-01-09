@@ -145,7 +145,7 @@ class NablaCollection {
 
     public async getMany(where?: any) {
         const docs = [];
-        
+
         const allDocs = await this.getAll();
 
         for await (const doc of allDocs) {
@@ -169,7 +169,7 @@ class NablaCollection {
     }
     public getManySync(where?: any) {
         const docs = [];
-        
+
         const allDocs = this.getAllSync();
 
         for (const doc of allDocs) {
@@ -190,6 +190,15 @@ class NablaCollection {
             }
         }
         return docs;
+    }
+
+    public async getFirst(where?: any) {
+        const docs = await this.getMany(where);
+        return (docs.length === 0) ? null : docs[0];
+    }
+    public getFirstSync(where?: any) {
+        const docs = this.getManySync(where);
+        return (docs.length === 0) ? null : docs[0];
     }
 
     public get exists() {
