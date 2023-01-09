@@ -1,11 +1,13 @@
 {
   "name": "nabladb",
-  "version": "0.0.1",
+  "version": "2.0.0",
   "description": "An Advance yet simple to use Database",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "keywords": [
-    "Database"
+    "Database",
+    "Collection",
+    "Document"
   ],
   "files": [
     "lib/**/*"
@@ -27,7 +29,7 @@
     "ts-node": "^10.9.1",
     "typescript": "^4.8.4"
   },
-  "homepage": "https://github.com/henil0604/filic#readme",
+  "homepage": "https://github.com/henil0604/nabladb#readme",
   "author": "Henil Malaviya <henilmalaviya06@gmail.com>",
   "dependencies": {
     "@helper-modules/log": "^1.0.0"
