@@ -1,6 +1,6 @@
 {
   "name": "nabladb",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "An Advance yet simple to use Database",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -23,6 +23,7 @@
   "license": "ISC",
   "type": "module",
   "devDependencies": {
+    "@helper-modules/log": "^1.0.0",
     "@types/node": "^18.7.20",
     "filic": "^2.2.3",
     "nodemon": "^2.0.20",
@@ -31,7 +32,5 @@
   },
   "homepage": "https://github.com/henil0604/nabladb#readme",
   "author": "Henil Malaviya <henilmalaviya06@gmail.com>",
-  "dependencies": {
-    "@helper-modules/log": "^1.0.0"
-  }
+  "dependencies": {}
 }
