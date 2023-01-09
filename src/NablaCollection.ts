@@ -143,6 +143,55 @@ class NablaCollection {
         return Utils.objectToArray(documents);
     }
 
+    public async getMany(where?: any) {
+        const docs = [];
+        
+        const allDocs = await this.getAll();
+
+        for await (const doc of allDocs) {
+            let valid = false;
+            for (const key in where) {
+                if (Object.prototype.hasOwnProperty.call(where, key)) {
+                    const value = where[key];
+                    if (value === doc[key]) {
+                        valid = true;
+                        continue;
+                    }
+                    valid = false;
+                }
+            }
+
+            if (valid === true) {
+                docs.push(doc);
+            }
+        }
+        return docs;
+    }
+    public getManySync(where?: any) {
+        const docs = [];
+        
+        const allDocs = this.getAllSync();
+
+        for (const doc of allDocs) {
+            let valid = false;
+            for (const key in where) {
+                if (Object.prototype.hasOwnProperty.call(where, key)) {
+                    const value = where[key];
+                    if (value === doc[key]) {
+                        valid = true;
+                        continue;
+                    }
+                    valid = false;
+                }
+            }
+
+            if (valid === true) {
+                docs.push(doc);
+            }
+        }
+        return docs;
+    }
+
     public get exists() {
 
         if (!this.Db.exists) {
