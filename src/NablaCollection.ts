@@ -201,6 +201,33 @@ class NablaCollection {
         return (docs.length === 0) ? null : docs[0];
     }
 
+    public async deleteFirst(where?: any) {
+        const doc = await this.getFirst(where);
+
+        if (!doc) return null;
+
+        await this.$CollectionJson.update((content) => {
+            const json = content.toJSON();
+            delete json.documents[doc._id];
+            return json;
+        })
+
+        return doc;
+    }
+    public deleteFirstSync(where?: any) {
+        const doc = this.getFirstSync(where);
+        
+        if (!doc) return null;
+
+        this.$CollectionJson.updateSync((content) => {
+            const json = content.toJSON();
+            delete json.documents[doc._id];
+            return json;
+        })
+
+        return doc;
+    }
+
     public get exists() {
 
         if (!this.Db.exists) {
